@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react"; 
 import { useNavigate } from "react-router-dom";
 
 import { NewsCard, NewsSkeleton } from "../components/newsCard";
@@ -48,6 +48,7 @@ const DashboardPage = () => {
 
   const signOut = () => {
     localStorage.removeItem("user");
+    localStorage.removeItem("note")
     navigate("/login");
   };
 
