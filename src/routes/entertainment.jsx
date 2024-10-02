@@ -25,11 +25,7 @@ const CategorySkeleton = () => (
 
 /// Entertainment Page
 const EntertainmentPage = () => {
-  const [movies, setMovies] = useState({
-    Action: [],
-    Thriller: [],
-    Horror: [],
-  });
+  const [movies, setMovies] = useState();
 
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -51,13 +47,15 @@ const EntertainmentPage = () => {
         throw new Error("Network response was not ok");
       }
       const data = await response.json();
-
-      const transformedMovies = {
-        Action: data.results.filter((movie) => movie.genre_ids.includes(28)),
-        Thriller: data.results.filter((movie) => movie.genre_ids.includes(53)),
-        Horror: data.results.filter((movie) => movie.genre_ids.includes(27)),
-      };
-
+      // selected categories fprovides array containing movie name and genre ID
+      const selectedCategories = JSON.parse(localStorage.getItem("selectedCategories")) 
+      const transformedMovies = {}
+      // Populate transformedMovies object with filtered movies for each selected category 
+      for(let category of selectedCategories) {
+        transformedMovies[category.name] = data.results.filter((movie) => 
+          movie.genre_ids.includes(parseInt(category.genreId)))
+      }
+      console.log(transformedMovies)
       setMovies(transformedMovies);
     } catch (error) {
       setError(error.message);
