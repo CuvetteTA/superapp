@@ -11,9 +11,9 @@ const CategoriesPage = () => {
 
   const toggleCategory = (category) => {
     setSelected((prev) =>
-      prev.some((c) => c === category)
-        ? prev.filter((c) => c !== category)
-        : [...prev, category]
+      prev.some((c) => c.name === category.name)
+        ? prev.filter((c) => c.name !== category.name)
+        : [...prev, {name: category.name, genreId: category.genreId}]
     );
   };
 
@@ -23,8 +23,16 @@ const CategoriesPage = () => {
       console.error("User not found in localStorage");
       navigate("/login");
     }
-    user.categories = selected;
+    const categoryArray = []
+    // Loop through each selected category object (with keys 'name' and 'genreId')
+    for(let category of selected) {
+      // Extract and add the 'name' value to categoryArray
+      categoryArray.push(category.name)
+    }
+    user.categories = categoryArray;
     localStorage.setItem("user", JSON.stringify(user));
+    // store the selected array (which contains 'name' and 'genreId') in localStorage
+    localStorage.setItem("selectedCategories", JSON.stringify(selected))
   };
 
   const handleSubmit = async (e) => {
@@ -58,8 +66,8 @@ const CategoriesPage = () => {
           }`}
         >
           {selected.map((category) => (
-            <span key={category} className={styles.selectedCategory}>
-              {category}{" "}
+            <span key={category.name} className={styles.selectedCategory}>
+              {category.name}{" "}
               <button onClick={() => toggleCategory(category)}>x</button>
             </span>
           ))}
@@ -83,11 +91,11 @@ const CategoriesPage = () => {
               className={styles.categoryButton}
               style={{
                 backgroundColor: category.color,
-                boxShadow: selected.includes(category.name)
+                boxShadow: selected.some(c => c.name === category.name)
                   ? "0 0 0 4px #148A14" // border hack
                   : "none",
               }}
-              onClick={() => toggleCategory(category.name)}
+              onClick={() => toggleCategory(category)}
             >
               <h3>{category.name}</h3>
               <img src={category.image} alt={category.name} />
